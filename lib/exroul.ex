@@ -47,11 +47,23 @@ defmodule Exroul do
 	end
 
 
-	defp make_props_win(balls, props_odds) do
-		#
-		#	TODO
-		#
-		nil
+	defp make_props_win(balls, prop_keys, props_odds) do
+		Enum.reduce(prop_keys, nil, fn(key, acc) ->
+			Enum.group_by(balls, &(&1[key]))
+			|> Enum.reduce(acc, fn
+				{prop_val, balls}, nil -> make_props_win_process(prop_val, balls, props_odds)
+				{prop_val, balls}, acc ->
+					quote location: :keep do
+						unquote(acc)
+						unquote(make_props_win_process(prop_val, balls, props_odds))
+					end
+			end)
+		end)
+	end
+	defp make_props_win_process(prop_val, balls, props_odds) do
+		quote location: :keep do
+			def win(n, unquote(prop_val)) when (n in unquote(Enum.map(balls, &(&1[:value])))), do: unquote(Map.get(props_odds, prop_val))
+		end
 	end
 
 
@@ -92,7 +104,7 @@ defmodule Exroul do
 			end
 			def valid?(_), do: false
 			unquote(make_combos_win(combos_odds))
-			unquote(make_props_win(balls, props_odds))
+			unquote(make_props_win(balls, prop_keys, props_odds))
 		end
 		Macro.to_string(res) |> IO.puts
 		res
