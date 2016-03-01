@@ -67,6 +67,11 @@ defmodule Exroul do
 	end
 
 
+	defp check_prop_uniq(other_props, this_prop, balls) do
+		other_vals = Enum.flat_map(balls, fn(this_ball) -> Enum.map(other_props, &(this_ball[&1])) end)
+		Enum.all?(balls, &(not(Enum.member?(other_vals,&1[this_prop]))))
+	end
+
 
 	defmacro __using__([balls: balls = [_|_], zeros: zeros = [_|_], combos: combos = [_|_]]) do
 		prop_keys = List.first(balls) |> Dict.keys |> Stream.filter(&(&1 != :value)) |> Enum.sort
@@ -77,6 +82,7 @@ defmodule Exroul do
 		true = (length(balls++zeros) == (values |> Enum.uniq |> length))
 		base_odd = length(balls)
 		true = Enum.all?(combos, &(is_integer(&1) and (&1 > 0) and (&1 < base_odd)))
+		true = Enum.all?(prop_keys, fn(prop) -> Enum.filter(prop_keys, &(&1 != prop)) |> check_prop_uniq(prop, balls) end)
 		combos_odds = Enum.reduce(combos, %{}, fn(n, acc) ->
 			raw = base_odd / n
 			res = round(raw)
