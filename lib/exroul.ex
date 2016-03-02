@@ -24,20 +24,20 @@ defmodule Exroul do
 	#
 
 
-	defp make_combos_win(combos_odds) do
+	defp make_combos_win(combos_odds, values) do
 		Enum.reduce(combos_odds, nil, fn
 			{len, odd}, nil ->
-				make_combos_win_process(len, odd)
+				make_combos_win_process(len, odd, values)
 			{len, odd}, acc ->
 				quote location: :keep do
 					unquote(acc)
-					unquote(make_combos_win_process(len, odd))
+					unquote(make_combos_win_process(len, odd, values))
 				end
 		end)
 	end
-	defp make_combos_win_process(len, odd) do
+	defp make_combos_win_process(len, odd, values) do
 		quote location: :keep do
-			def win(n, bet = [_|_]) when (length(bet) == unquote(len)) do
+			def win(n, bet = [_|_]) when ((length(bet) == unquote(len)) and (n in unquote(values))) do
 				case Enum.member?(n, bet) do
 					true -> unquote(odd)
 					false -> 0
@@ -109,7 +109,7 @@ defmodule Exroul do
 				(length(subj) in unquote(combos))
 			end
 			def valid?(_), do: false
-			unquote(make_combos_win(combos_odds))
+			unquote(make_combos_win(combos_odds, values))
 			unquote(make_props_win(balls, prop_keys, props_odds))
 		end
 		Macro.to_string(res) |> IO.puts
