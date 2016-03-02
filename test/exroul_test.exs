@@ -19,6 +19,6 @@ defmodule ExroulTest do
 	use ExroulTest.Macro
 
 	test "the truth" do
-		assert 1 + 1 == 2
+		assert Enum.all?(0..36, &(win(&1,[&1]) == 36))
 	end
 end

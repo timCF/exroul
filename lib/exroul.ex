@@ -38,7 +38,7 @@ defmodule Exroul do
 	defp make_combos_win_process(len, odd, values) do
 		quote location: :keep do
 			def win(n, bet = [_|_]) when ((length(bet) == unquote(len)) and (n in unquote(values))) do
-				case Enum.member?(n, bet) do
+				case Enum.member?(bet, n) do
 					true -> unquote(odd)
 					false -> 0
 				end
