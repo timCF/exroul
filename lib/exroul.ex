@@ -111,6 +111,7 @@ defmodule Exroul do
 			def valid?(_), do: false
 			unquote(make_combos_win(combos_odds, values))
 			unquote(make_props_win(balls, prop_keys, props_odds))
+			def win(n, bet) when ((n in unquote(values)) and (bet in unquote(prop_vals))), do: 0
 		end
 		Macro.to_string(res) |> IO.puts
 		res
