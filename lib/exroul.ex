@@ -73,7 +73,7 @@ defmodule Exroul do
 	end
 
 
-	defmacro __using__([balls: balls = [_|_], zeros: zeros = [_|_], combos: combos = [_|_]]) do
+	defmacro __using__([balls: balls = [_|_], zeros: zeros = [_|_], combos: combos = [_|_], debug: debug]) do
 		prop_keys = List.first(balls) |> Dict.keys |> Stream.filter(&(&1 != :value)) |> Enum.sort
 		prop_vals = Stream.flat_map(balls, fn(ball) -> Enum.map(prop_keys, &(ball[&1])) end) |> Enum.uniq
 		values = Enum.map(balls, &(&1[:value]))++zeros
@@ -113,7 +113,7 @@ defmodule Exroul do
 			unquote(make_props_win(balls, prop_keys, props_odds))
 			def win(n, bet) when ((n in unquote(values)) and (bet in unquote(prop_vals))), do: 0
 		end
-		Macro.to_string(res) |> IO.puts
+		if (debug), do: (Macro.to_string(res) |> IO.puts)
 		res
 	end
 

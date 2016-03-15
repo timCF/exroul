@@ -1,20 +1,7 @@
 # Exroul
 
-**TODO: Add description**
+Abstract roulettes, based on macro. For example of usage, look
 
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
-
-  1. Add exroul to your list of dependencies in `mix.exs`:
-
-        def deps do
-          [{:exroul, "~> 0.0.1"}]
-        end
-
-  2. Ensure exroul is started before your application:
-
-        def application do
-          [applications: [:exroul]]
-        end
-
+```
+./test/exroul_test.exs
+```

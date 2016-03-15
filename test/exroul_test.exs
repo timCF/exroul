@@ -8,7 +8,7 @@ defmodule ExroulTest.Macro do
 			]
 		end)
 		quote location: :keep do
-			use Exroul, [balls: unquote(balls), zeros: [0], combos: [1,2,3,4,6]]
+			use Exroul, [balls: unquote(balls), zeros: [0], combos: [1,2,3,4,6], debug: true]
 		end
 	end
 end
