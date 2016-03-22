@@ -79,6 +79,7 @@ defmodule Exroul do
 		values = Enum.map(balls, &(&1[:value]))++zeros
 		true = Enum.all?(balls, fn(ball) -> prop_keys == (ball |> Dict.keys |> Stream.filter(&(&1 != :value)) |> Enum.sort) end)
 		true = Enum.all?(values, &is_integer/1)
+		true = Enum.all?(prop_vals, &is_atom/1)
 		true = (length(balls++zeros) == (values |> Enum.uniq |> length))
 		base_odd = length(balls)
 		true = Enum.all?(combos, &(is_integer(&1) and (&1 > 0) and (&1 < base_odd)))
@@ -100,6 +101,9 @@ defmodule Exroul do
 			end)
 		end)
 		res = quote location: :keep do
+			def list_odds, do: unquote((Enum.to_list(props_odds) ++ Enum.to_list(combos_odds)) |> Enum.sort)
+			def list_vals, do: unquote(values |> Enum.sort)
+			def list_props, do: unquote(prop_vals |> Enum.sort)
 			def valid?(subj) when (subj in unquote(prop_vals)), do: true
 			def valid?(subj = [_|_]) do
 				Enum.all?(subj, &(&1 in unquote(values)))
