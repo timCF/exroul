@@ -67,6 +67,26 @@ defmodule Exroul do
 	end
 
 
+	defp make_alias2list(balls, prop_keys) do
+		Enum.reduce(prop_keys, nil, fn(key, acc) ->
+			Enum.group_by(balls, &(&1[key]))
+			|> Enum.reduce(acc, fn
+				{prop_val, balls}, nil -> make_alias2list_process(prop_val, balls)
+				{prop_val, balls}, acc ->
+					quote location: :keep do
+						unquote(acc)
+						unquote(make_alias2list_process(prop_val, balls))
+					end
+			end)
+		end)
+	end
+	defp make_alias2list_process(prop_val, balls) do
+		quote location: :keep do
+			def alias2list(unquote(prop_val)), do: unquote(Enum.map(balls, &(&1[:value])))
+		end
+	end
+
+
 	defp check_prop_uniq(other_props, this_prop, balls) do
 		other_vals = Enum.flat_map(balls, fn(this_ball) -> Enum.map(other_props, &(this_ball[&1])) end)
 		Enum.all?(balls, &(not(Enum.member?(other_vals,&1[this_prop]))))
@@ -115,6 +135,7 @@ defmodule Exroul do
 			def valid?(_), do: false
 			unquote(make_combos_win(combos_odds, values))
 			unquote(make_props_win(balls, prop_keys, props_odds))
+			unquote(make_alias2list(balls, prop_keys))
 			def win(n, bet) when ((n in unquote(values)) and (bet in unquote(prop_vals))), do: 0
 		end
 		if (debug), do: (Macro.to_string(res) |> IO.puts)

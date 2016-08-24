@@ -23,5 +23,6 @@ defmodule ExroulTest do
 		assert Enum.sort([:odd, :even, :red, :black]) == list_props
 		assert Enum.sort(0..36) == list_vals
 		assert Enum.all?(0..36, &(win(&1,[&1]) == 36))
+		assert ([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36] == alias2list(:red))
 	end
 end
